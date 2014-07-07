@@ -1,0 +1,14 @@
+pom.xml
+*jar
+/lib/
+/classes/
+/target/
+*swp
+.lein-failures
+.lein-deps-sum
+.repl
+*.*un~
+/resources/public/js/out/
+/resources/public/js/prod/
+/resources/public/js/silkscreen.js
+/resources/public/js/main.js
