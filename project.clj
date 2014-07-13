@@ -11,10 +11,10 @@
                  ; editor backend
                  [http-kit "2.1.16"]
                  [ring/ring "1.2.1"]
-                 [enlive "1.0.0"]
                  [compojure "1.1.6"]
                  [fogus/ring-edn "0.2.0"]
                  [com.taoensso/timbre "3.2.1"]
+                 [autoclave "0.1.7"]
 
                  ; clojurescript deps
                  [org.clojure/clojurescript "0.0-2227"]

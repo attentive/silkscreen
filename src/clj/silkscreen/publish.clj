@@ -1,12 +1,14 @@
 (ns silkscreen.publish
-  (:require [net.cgrand.enlive-html :refer [html emit* snippet* content append deftemplate]]
-            [net.cgrand.tagsoup :refer [parser]]
+  (:require [net.cgrand.enlive-html :refer [content html-content append]]
             [me.raynes.fs :refer [mkdirs hidden? file delete list-dir with-cwd]]
+            [autoclave.core :refer [markdown-to-html]]
+            [hiccup.core :refer [html]]
             [clojure.string :as string])
   (:use [clojure.java.shell :only [sh]]
         org.satta.glob
         [silkscreen.path :only [ensure-path]]
-        [silkscreen.post :only [read-file]]))
+        [silkscreen.post :only [read-file]]
+        [silkscreen.conduit :only [defconduit]]))
 
 (defmacro print-sh [& args]
   `(print (:out (sh ~@args))))
@@ -17,16 +19,20 @@
       post-glob (str post-dir "*.post")
       target-dir "/home/tom/dev/attentive.github.io/"]
 
-  (defn- render-post 
-    "Given a template file and a post, use these transformations to produce an HTML output."
+  (defconduit page
     [post]
-    (let [nodes (parser (clojure.java.io/reader (str template-dir (:template post))))]
-      (apply str 
-             (emit* 
-               ((snippet* nodes
-                          [post]
-                          [:head :title] (content (:title post))) 
-                post)))))
+    [:head :title] (content (:title post))
+    [:body :div#nav] 
+    (html-content 
+      (html
+        [:div.container-fluid
+         [:ul.nav.navbar.navbar-nav
+          [:li.active [:a {:href "#"} [:h3 "home"]]] 
+          [:li.active [:a {:href "#"} [:h3 "about"]]] 
+          [:li.active [:a {:href "#"} [:h3 "archive"]]] 
+          [:li.active [:a {:href "#"} [:h3 "categories"]]] 
+          [:li.active [:a {:href "#"} [:h3 "tags"]]]]])) 
+    [:body :div#post] (html-content (markdown-to-html (:body post))))
 
   (defn publish-post [post dir]
     (let [template (:template post)
@@ -35,7 +41,9 @@
       (mkdirs path)
       (println "publishing" rel-path)
       (spit (str path "/post.edn") (pr-str post)) ; pure data now
-      (spit (str path "/index.html") (render-post post))))
+      (spit (str path "/index.html") 
+            (apply str (page (str template-dir (:template post)) 
+                             post)))))
 
   (defn post-file [post-id]
     (str post-dir post-id ".post"))

@@ -8,13 +8,13 @@
 
 (def page-state (atom {:post nil}))
 
-(silkscreen.xhr/edn-xhr
+#_(silkscreen.xhr/edn-xhr
   {:method :get
    :url "post.edn"
    :on-complete #(swap! page-state assoc :post (:body %)) 
    :on-error #(println "Error retrieving post.")})
 
-(defn nav-view [_ owner]
+#_(defn nav-view [_ owner]
   (reify
     om/IRender
     (render [_]
@@ -27,7 +27,7 @@
            [:li.active [:a {:href "#"} [:h3 "categories"]]] 
            [:li.active [:a {:href "#"} [:h3 "tags"]]]]])))) 
 
-(defn post-view [app owner]
+#_(defn post-view [app owner]
   (reify
     om/IRender
     (render [_]
@@ -38,12 +38,12 @@
                        {:opts {:data-fn #(:body %)
                                :display-fn (constantly true)}})])))))
 
-(om/root
+#_(om/root
   nav-view
   (atom {})
   {:target (. js/document (getElementById "nav"))})
 
-(om/root
+#_(om/root
   post-view
   page-state
   {:target (. js/document (getElementById "post"))})
