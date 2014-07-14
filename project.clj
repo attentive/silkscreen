@@ -6,7 +6,7 @@
                  [enlive "1.1.5"]                 
                  [clj-time "0.7.0"]
                  [clj-glob "1.0.0"]
-                 [me.raynes/fs "1.4.4"]
+                 [me.raynes/conch "0.8.0"]
 
                  ; editor backend
                  [http-kit "2.1.16"]
