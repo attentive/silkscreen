@@ -1,7 +1,7 @@
 (ns silkscreen.publish
   (:require [net.cgrand.enlive-html :refer [content html-content append]]
             [me.raynes.fs :refer [mkdirs hidden? file delete list-dir with-cwd]]
-            [autoclave.core :refer [markdown-to-html]]
+            [autoclave.core :refer [markdown-to-html markdown-processor]]
             [hiccup.core :refer [html]]
             [clojure.string :as string])
   (:use [clojure.java.shell :only [sh]]
@@ -9,6 +9,8 @@
         [silkscreen.path :only [ensure-path]]
         [silkscreen.post :only [read-file]]
         [silkscreen.conduit :only [defconduit]]))
+
+(defonce md (markdown-processor :fenced-code-blocks))
 
 (defmacro print-sh [& args]
   `(print (:out (sh ~@args))))
@@ -32,7 +34,7 @@
           [:li.active [:a {:href "#"} [:h3 "archive"]]] 
           [:li.active [:a {:href "#"} [:h3 "categories"]]] 
           [:li.active [:a {:href "#"} [:h3 "tags"]]]]])) 
-    [:body :div#post] (html-content (markdown-to-html (:body post))))
+    [:body :div#post] (html-content (markdown-to-html md (:body post))))
 
   (defn publish-post [post dir]
     (let [template (:template post)

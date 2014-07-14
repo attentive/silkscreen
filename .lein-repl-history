@@ -452,3 +452,7 @@ POST
 (publish-site)
 (use 'silkscreen.publish :reload)
 (publish-site)
+(use 'silkscreen.publish :reload)
+(publish-site)
+(use 'silkscreen.publish :reload)
+(publish-site)
