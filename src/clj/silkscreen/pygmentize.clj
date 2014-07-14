@@ -3,6 +3,8 @@
             [net.cgrand.enlive-html :refer [html-content]]
             taoensso.timbre))
 
+(taoensso.timbre/refer-timbre)
+
 (defn pygmentize
   "Syntax highlight some code."
   [language text]
