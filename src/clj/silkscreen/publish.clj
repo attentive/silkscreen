@@ -13,66 +13,67 @@
 
 (defonce pegd (markdown-processor :fenced-code-blocks))
 
-(let [source-dir "/home/tom/dev/tomlynch.io.posts/"
-      [resource-dir post-dir template-dir] 
-      (map #(str source-dir % "/") ["resources" "posts" "templates"])
-      post-glob (str post-dir "*.post")
-      target-dir "/home/tom/dev/attentive.github.io/"]
+(defn publish-site 
+  "Publish an entire site."
+  [opts]
 
-  (def nav
-    (html
-      [:div.container-fluid
-       [:ul.nav.navbar.navbar-nav
-        [:li.active [:a {:href "/"} [:h3 "home"]]] 
-        [:li.active [:a {:href "/about"} [:h3 "about"]]] 
-        [:li.active [:a {:href "/archive"} [:h3 "archive"]]] 
-        [:li.active [:a {:href "/categories"} [:h3 "categories"]]] 
-        [:li.active [:a {:href "/tags"} [:h3 "tags"]]]]])) 
+  (let [source-dir (:source-dir opts)
+        [resource-dir post-dir template-dir] 
+        (map #(str source-dir % "/") ["resources" "posts" "templates"])
+        post-glob (str post-dir "*.post")
+        target-dir (:target-dir opts)]
 
-  (defconduit post-page
-    [post]
-    [:head :title] (content (:title post))
-    [:body :div#nav] (html-content nav)
-    [:body :div#post] (html-content (markdown-to-html pegd (:body post))))
+    (def nav
+      (html
+        [:div.container-fluid
+         [:ul.nav.navbar.navbar-nav
+          [:li.active [:a {:href "/"} [:h3 "home"]]] 
+          [:li.active [:a {:href "/about"} [:h3 "about"]]] 
+          [:li.active [:a {:href "/archive"} [:h3 "archive"]]] 
+          [:li.active [:a {:href "/categories"} [:h3 "categories"]]] 
+          [:li.active [:a {:href "/tags"} [:h3 "tags"]]]]])) 
 
-  (defconduit alpha-index-page
-    [index]
-    [:head :title] (content (:title index))
-    [:body :div#nav] (html-content nav)
-    [:body :div#index :li] (clone-for [item (:items index)]
-                                      [:li] (content item)))
-    
-  (defmacro pr-sh [cmd & args]
-    `(doseq [line# (~cmd ~@args {:seq true})] (println line#)))
+    (defconduit post-page
+      [post]
+      [:head :title] (content (:title post))
+      [:body :div#nav] (html-content nav)
+      [:body :div#post] (html-content (markdown-to-html pegd (:body post))))
 
-  (defn publish-post [post dir]
-    (let [template (:template post)
-          rel-path (:path (ensure-path post))
-          path (str dir rel-path)]
-      (with-programs [mkdir] (mkdir "-p" path))
-      (println "→" rel-path)
-      ; pure post data
-      (spit (str path "/post.edn") (pr-str post))
-      ; rendered post
-      (spit (str path "/index.html") 
-            (apply str (post-page (str template-dir (:template post)) 
-                             post)))))
+    (defconduit alpha-index-page
+      [index]
+      [:head :title] (content (:title index))
+      [:body :div#nav] (html-content nav)
+      [:body :div#index :li] (clone-for [item (:items index)]
+                                        [:li] (content item)))
 
-  (defn post-file [post-id]
-    (str post-dir post-id ".post"))
+    (defmacro pr-sh [cmd & args]
+      `(doseq [line# (~cmd ~@args {:seq true})] (println line#)))
 
-  (defn all-post-files []
-    (map #(.getPath %) (glob post-glob)))
+    (defn publish-post [post dir]
+      (let [template (:template post)
+            rel-path (:path (ensure-path post))
+            path (str dir rel-path)]
+        (with-programs [mkdir] (mkdir "-p" path))
+        (println "→" rel-path)
+        ; pure post data
+        (spit (str path "/post.edn") (pr-str post))
+        ; rendered post
+        (spit (str path "/index.html") 
+              (apply str (post-page (str template-dir (:template post)) 
+                                    post)))))
 
-  (defn all-post-ids []
-    (map #(-> % 
-              (.getName)
-              (string/replace #"(?<root>.*).post" "${root}"))
-         (glob post-glob)))
+    (defn post-file [post-id]
+      (str post-dir post-id ".post"))
 
-  (defn publish-site 
-    "Publish an entire site."
-    []
+    (defn all-post-files []
+      (map #(.getPath %) (glob post-glob)))
+
+    (defn all-post-ids []
+      (map #(-> % 
+                (.getName)
+                (string/replace #"(?<root>.*).post" "${root}"))
+           (glob post-glob)))
+
     (with-programs [ls cp rm mkdir]
 
       (pr-sh mkdir "-vp" target-dir)

@@ -1,4 +1,4 @@
-(defproject silkscreen "0.1-SNAPSHOT"
+(defproject silkscreen "0.2"
   :description "Client-side blog renderer"
   :jvm-opts ^:replace ["-Xmx1g" "-server"]
 
@@ -31,11 +31,15 @@
 
   :main silkscreen.publish
 
-  :plugins [[lein-cljsbuild "1.0.3"]]
+  :plugins [[lein-cljsbuild "1.0.3"]
+            [silkscreen "0.1-SNAPSHOT"]]
 
   :source-paths ["src/clj"]
 
   :resource-paths ["resources"]
+
+  :silkscreen {:source-dir "/home/tom/dev/tomlynch.io.posts"
+               :target-dir "/home/tom/dev/attentive.github.io"}
 
   :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src/cljs"]

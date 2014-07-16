@@ -1,4 +1,3 @@
-(java.util.Date. "04-07-2014")
 (java.util.Date. "04.07/2014")
 (java.util.Date. "04/07/2014")
 (read-string "#inst "2014-04-06")
@@ -498,3 +497,4 @@ ls
 (publish-site)
 (use 'silkscreen.publish :reload)
 (publish-site)
+(use 'silkscreen.publish :reload)
