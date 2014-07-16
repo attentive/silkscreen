@@ -29,17 +29,16 @@
                    :dependencies [[org.clojure/tools.namespace "0.2.4"]
                                   [org.clojure/java.classpath "0.2.2"]]}}
 
-  :main silkscreen.publish
+  :silkscreen {:source-dir "/home/tom/dev/tomlynch.io.posts/"
+               :target-dir "/home/tom/dev/attentive.github.io/"}
 
-  :plugins [[lein-cljsbuild "1.0.3"]
-            [silkscreen "0.1-SNAPSHOT"]]
+  :eval-in-leiningen true
+
+  :plugins [[lein-cljsbuild "1.0.3"]]
 
   :source-paths ["src/clj"]
 
   :resource-paths ["resources"]
-
-  :silkscreen {:source-dir "/home/tom/dev/tomlynch.io.posts"
-               :target-dir "/home/tom/dev/attentive.github.io"}
 
   :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src/cljs"]

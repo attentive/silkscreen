@@ -3,6 +3,8 @@
 
 (defn silkscreen [project & args]
   (let [opts (:silkscreen project)]
-    (silkscreen/publish-site opts)))
+    (if opts
+      (silkscreen/publish-site opts)
+      (println "Error no silkscreen options provided in project.clj"))))
 
 

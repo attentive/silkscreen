@@ -13,6 +13,9 @@
 
 (defonce pegd (markdown-processor :fenced-code-blocks))
 
+(defmacro pr-sh [cmd & args]
+  `(doseq [line# (~cmd ~@args {:seq true})] (println line#)))
+
 (defn publish-site 
   "Publish an entire site."
   [opts]
@@ -46,9 +49,6 @@
       [:body :div#index :li] (clone-for [item (:items index)]
                                         [:li] (content item)))
 
-    (defmacro pr-sh [cmd & args]
-      `(doseq [line# (~cmd ~@args {:seq true})] (println line#)))
-
     (defn publish-post [post dir]
       (let [template (:template post)
             rel-path (:path (ensure-path post))
@@ -77,6 +77,7 @@
     (with-programs [ls cp rm mkdir]
 
       (pr-sh mkdir "-vp" target-dir)
+      
       ; delete old
       (doseq [item (ls target-dir {:seq true})]
         (pr-sh rm "-rvf" (str target-dir item)))
