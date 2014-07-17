@@ -1,6 +1,6 @@
 (ns silkscreen.pygmentize
   (:require [me.raynes.conch :refer [let-programs]]
-            [net.cgrand.enlive-html :refer [html-content]]
+            [net.cgrand.enlive-html :refer [at html-content html-snippet select substitute]]
             taoensso.timbre))
 
 (taoensso.timbre/refer-timbre)
@@ -17,7 +17,10 @@
   "Syntax highlight a node. The node must have the language in the
   data-language attribute."
   [node]
-  (let [language (-> node :attrs :class)
-        new-content (pygmentize language (:content node))]
-    ((html-content new-content) node)))
+  (let [code (first (select node [:code]))
+        language (-> code :attrs :class)
+        new-content (if language 
+                      (pygmentize language (:content code))
+                      (:content code))]
+    ((substitute (html-snippet new-content)) node)))
 

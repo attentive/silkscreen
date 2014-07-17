@@ -4,48 +4,48 @@
             [silkscreen.controls :as controls]
             [silkscreen.xhr :as xhr]))
 
-(enable-console-print!)
+;(enable-console-print!)
 
-(def page-state (atom {:post nil}))
+;(def page-state (atom {:post nil}))
 
-#_(silkscreen.xhr/edn-xhr
-  {:method :get
-   :url "post.edn"
-   :on-complete #(swap! page-state assoc :post (:body %)) 
-   :on-error #(println "Error retrieving post.")})
+;(silkscreen.xhr/edn-xhr
+;  {:method :get
+;   :url "post.edn"
+;   :on-complete #(swap! page-state assoc :post (:body %)) 
+;   :on-error #(println "Error retrieving post.")})
 
-#_(defn nav-view [_ owner]
-  (reify
-    om/IRender
-    (render [_]
-      (html
-        [:div.container-fluid
-          [:ul.nav.navbar.navbar-nav
-           [:li.active [:a {:href "#"} [:h3 "home"]]] 
-           [:li.active [:a {:href "#"} [:h3 "about"]]] 
-           [:li.active [:a {:href "#"} [:h3 "archive"]]] 
-           [:li.active [:a {:href "#"} [:h3 "categories"]]] 
-           [:li.active [:a {:href "#"} [:h3 "tags"]]]]])))) 
+;#_(defn nav-view [_ owner]
+;  (reify
+;    om/IRender
+;    (render [_]
+;      (html
+;        [:div.container-fluid
+;          [:ul.nav.navbar.navbar-nav
+;           [:li.active [:a {:href "#"} [:h3 "home"]]] 
+;           [:li.active [:a {:href "#"} [:h3 "about"]]] 
+;           [:li.active [:a {:href "#"} [:h3 "archive"]]] 
+;           [:li.active [:a {:href "#"} [:h3 "categories"]]] 
+;           [:li.active [:a {:href "#"} [:h3 "tags"]]]]])))) 
 
-#_(defn post-view [app owner]
-  (reify
-    om/IRender
-    (render [_]
-      (when-let [post (get app :post)]
-        ;(set! (.-title js/document (:title post)))
-        (html [:div.container
-               (om/build controls/markdown-textarea post
-                       {:opts {:data-fn #(:body %)
-                               :display-fn (constantly true)}})])))))
+;#_(defn post-view [app owner]
+;  (reify
+;    om/IRender
+;    (render [_]
+;      (when-let [post (get app :post)]
+;        ;(set! (.-title js/document (:title post)))
+;        (html [:div.container
+;               (om/build controls/markdown-textarea post
+;                       {:opts {:data-fn #(:body %)
+;                               :display-fn (constantly true)}})])))))
 
-#_(om/root
-  nav-view
-  (atom {})
-  {:target (. js/document (getElementById "nav"))})
+;#_(om/root
+;  nav-view
+;  (atom {})
+;  {:target (. js/document (getElementById "nav"))})
 
-#_(om/root
-  post-view
-  page-state
-  {:target (. js/document (getElementById "post"))})
+;#_(om/root
+;  post-view
+;  page-state
+;  {:target (. js/document (getElementById "post"))})
 
 

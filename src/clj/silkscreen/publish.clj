@@ -28,19 +28,22 @@
 
     (def nav
       (html
-        [:div.container-fluid
-         [:ul.nav.navbar.navbar-nav
-          [:li.active [:a {:href "/"} [:h3 "home"]]] 
-          [:li.active [:a {:href "/about"} [:h3 "about"]]] 
-          [:li.active [:a {:href "/archive"} [:h3 "archive"]]] 
-          [:li.active [:a {:href "/categories"} [:h3 "categories"]]] 
-          [:li.active [:a {:href "/tags"} [:h3 "tags"]]]]])) 
+        [:nav.navbar.navbar-default
+         [:div.container-fluid
+          [:div.collapse.navbar-collapse
+           [:ul.nav.navbar.navbar-nav
+            [:li.active [:h3 [:a {:href "/"} "home"]]] 
+            [:li.active [:h3 [:a {:href "/about"} "about"]]] 
+            [:li.active [:h3 [:a {:href "/archive"} "archive"]]] 
+            [:li.active [:h3 [:a {:href "/categories"} "categories"]]] 
+            [:li.active [:h3 [:a {:href "/tags"} "tags"]]]]]]])) 
 
     (defconduit post-page
       [post]
       [:head :title] (content (:title post))
       [:body :div#nav] (html-content nav)
-      [:body :div#post] (html-content (markdown-to-html pegd (:body post))))
+      [:body :div#post] (html-content (markdown-to-html pegd (:body post)))
+      [:pre] pygmentize-node)
 
     (defconduit alpha-index-page
       [index]
