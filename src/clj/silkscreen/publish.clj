@@ -1,12 +1,15 @@
 (ns silkscreen.publish
-  (:require [net.cgrand.enlive-html :refer [append clone-for content html-content]]
+  (:require [net.cgrand.enlive-html :refer [append clone-for content html-content attr?]]
             [me.raynes.conch :refer [with-programs]]
             [autoclave.core :refer [markdown-to-html markdown-processor]]
+            [clj-time.format :as timef]
+            [clj-time.core :as timec]
+            [clj-time.coerce :as timecoerce]
             [hiccup.core :refer [html]]
             [clojure.string :as string])
   (:use [clojure.java.shell :only [sh]]
         org.satta.glob
-        [silkscreen.pygmentize :only [pygmentize-node]]
+        [silkscreen.extend :only [extend-node]]
         [silkscreen.path :only [ensure-path]]
         [silkscreen.post :only [read-file]]
         [silkscreen.conduit :only [defconduit]]))
@@ -15,6 +18,11 @@
 
 (defmacro pr-sh [cmd & args]
   `(doseq [line# (~cmd ~@args {:seq true})] (println line#)))
+
+(defn format-date [inst]
+  (timef/unparse
+    (timef/formatter "d MMMM, yyyy")
+    (timecoerce/from-date inst)))
 
 (defn publish-site 
   "Publish an entire site."
@@ -28,22 +36,22 @@
 
     (def nav
       (html
-        [:nav.navbar.navbar-default
-         [:div.container-fluid
-          [:div.collapse.navbar-collapse
-           [:ul.nav.navbar.navbar-nav
-            [:li.active [:h3 [:a {:href "/"} "home"]]] 
-            [:li.active [:h3 [:a {:href "/about"} "about"]]] 
-            [:li.active [:h3 [:a {:href "/archive"} "archive"]]] 
-            [:li.active [:h3 [:a {:href "/categories"} "categories"]]] 
-            [:li.active [:h3 [:a {:href "/tags"} "tags"]]]]]]])) 
+        [:nav
+         [:ul.nav.nav-stacked
+          [:li.active [:h3 [:a {:href "/"} "home"]]] 
+          [:li.active [:h3 [:a {:href "/about"} "about"]]] 
+          [:li.active [:h3 [:a {:href "/archive"} "archive"]]] 
+          [:li.active [:h3 [:a {:href "/categories"} "categories"]]] 
+          [:li.active [:h3 [:a {:href "/tags"} "tags"]]]]])) 
 
     (defconduit post-page
       [post]
       [:head :title] (content (:title post))
-      [:body :div#nav] (html-content nav)
-      [:body :div#post] (html-content (markdown-to-html pegd (:body post)))
-      [:pre] pygmentize-node)
+      [:body :.silkscreen-nav] (html-content nav)
+      [:body :.silkscreen-title] (content (:title post))
+      [:body :.silkscreen-published] (content (format-date (:published post)))
+      [:body :.silkscreen-post] (html-content (markdown-to-html pegd (:body post)))
+      [:body [(attr? :silkscreen)]] extend-node)
 
     (defconduit alpha-index-page
       [index]

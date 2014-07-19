@@ -46,6 +46,10 @@ screen -t cljs
 chdir /home/tom/dev/silkscreen/src/clj/silkscreen
 screen -t clj
 
-chdir /home/tom/dev/silkscreen
-screen -t bash
+chdir /home/tom/dev/attentive.github.io
+screen -t http-server http-server -g
+
+chdir /home/tom/dev/tomlynch.io.posts
+screen -t content
+
 

@@ -2,11 +2,14 @@
   :description "Client-side blog renderer"
   :jvm-opts ^:replace ["-Xmx1g" "-server"]
 
-  :dependencies [[org.clojure/clojure "1.5.1"]
+  :dependencies [; publisher
+                 [org.clojure/clojure "1.5.1"]
                  [enlive "1.1.5"]                 
                  [clj-time "0.7.0"]
                  [clj-glob "1.0.0"]
                  [me.raynes/conch "0.8.0"]
+                 [autoclave "0.1.7"]
+                 [rhizome "0.2.1"]
 
                  ; editor backend
                  [http-kit "2.1.16"]
@@ -14,7 +17,6 @@
                  [compojure "1.1.6"]
                  [fogus/ring-edn "0.2.0"]
                  [com.taoensso/timbre "3.2.1"]
-                 [autoclave "0.1.7"]
 
                  ; clojurescript deps
                  [org.clojure/clojurescript "0.0-2227"]
