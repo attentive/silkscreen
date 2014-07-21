@@ -1,6 +1,3 @@
-(use 'silkscreen.publish :reload)
-(publish-site)
-(use 'silkscreen.publish :reload)
 (publish-site)
 (use 'silkscreen.publish :reload)
 (publish-site)
@@ -498,3 +495,6 @@ ation-item ">
 (into [] (conj (keyword (first test)) (rest test)))
 (into [] (cons (keyword (first test)) (rest test)))
 (second ["foo"])
+(use 'silkscreen.blog :reload)
+(use 'silkscreen.publish :reload)
+(use 'silkscreen.extend :reload)

@@ -1,28 +1,15 @@
 (ns silkscreen.publish
-  (:require [net.cgrand.enlive-html :refer [append clone-for content html-content attr?]]
-            [me.raynes.conch :refer [with-programs]]
-            [autoclave.core :refer [markdown-to-html markdown-processor]]
-            [clj-time.format :as timef]
-            [clj-time.core :as timec]
-            [clj-time.coerce :as timecoerce]
-            [hiccup.core :refer [html]]
+  (:require [me.raynes.conch :refer [with-programs]]
             [clojure.string :as string])
   (:use [clojure.java.shell :only [sh]]
         org.satta.glob
-        [silkscreen.extend :only [extend-node]]
         [silkscreen.path :only [ensure-path]]
         [silkscreen.post :only [read-file]]
-        [silkscreen.conduit :only [defconduit]]))
-
-(defonce pegd (markdown-processor :fenced-code-blocks))
+        [silkscreen.blog :only [index-page post-page]]))
 
 (defmacro pr-sh [cmd & args]
   `(doseq [line# (~cmd ~@args {:seq true})] (println line#)))
 
-(defn format-date [inst]
-  (timef/unparse
-    (timef/formatter "d MMMM, yyyy")
-    (timecoerce/from-date inst)))
 
 (defn publish-site 
   "Publish an entire site."
@@ -32,33 +19,16 @@
         [resource-dir post-dir template-dir] 
         (map #(str source-dir % "/") ["resources" "posts" "templates"])
         post-glob (str post-dir "*.post")
+        page-glob (str post-dir "*.page")
         target-dir (:target-dir opts)]
 
-    (def nav
-      (html
-        [:nav
-         [:ul.nav.nav-stacked
-          [:li.active [:h3 [:a {:href "/"} "home"]]] 
-          [:li.active [:h3 [:a {:href "/about"} "about"]]] 
-          [:li.active [:h3 [:a {:href "/archive"} "archive"]]] 
-          [:li.active [:h3 [:a {:href "/categories"} "categories"]]] 
-          [:li.active [:h3 [:a {:href "/tags"} "tags"]]]]])) 
-
-    (defconduit post-page
-      [post]
-      [:head :title] (content (:title post))
-      [:body :.silkscreen-nav] (html-content nav)
-      [:body :.silkscreen-title] (content (:title post))
-      [:body :.silkscreen-published] (content (format-date (:published post)))
-      [:body :.silkscreen-post] (html-content (markdown-to-html pegd (:body post)))
-      [:body [(attr? :silkscreen)]] extend-node)
-
-    (defconduit alpha-index-page
-      [index]
-      [:head :title] (content (:title index))
-      [:body :div#nav] (html-content nav)
-      [:body :div#index :li] (clone-for [item (:items index)]
-                                        [:li] (content item)))
+    (defn publish-index [data dir]
+      (let [template (:index data)
+            rel-path "/"
+            path (str dir rel-path)]
+        (println "→" rel-path)
+        (spit (str path "/index.html")
+              (apply str (index-page (str template-dir template) data)))))
 
     (defn publish-post [post dir]
       (let [template (:template post)
@@ -70,25 +40,40 @@
         (spit (str path "/post.edn") (pr-str post))
         ; rendered post
         (spit (str path "/index.html") 
-              (apply str (post-page (str template-dir (:template post)) 
+              (apply str (post-page (str template-dir template) 
                                     post)))))
 
-    (defn post-file [post-id]
-      (str post-dir post-id ".post"))
+    (defn publish-page [page dir]
+      (let [template (:template page)
+            rel-path "about"
+            path (str dir rel-path)]
+        (with-programs [mkdir] (mkdir "-p" path))
+        (println "→" rel-path)
+        ; pure post data
+        (spit (str path "/post.edn") (pr-str page))
+        ; rendered post
+        (spit (str path "/index.html") 
+              (apply str (post-page (str template-dir template) 
+                                    page)))))
 
-    (defn all-post-files []
-      (map #(.getPath %) (glob post-glob)))
+    (defn publish-posts [data dir]
+        (doseq [post (:posts data)]
+          (publish-post post target-dir)))
 
-    (defn all-post-ids []
-      (map #(-> % 
-                (.getName)
-                (string/replace #"(?<root>.*).post" "${root}"))
-           (glob post-glob)))
+    (defn publish-pages [data dir]
+        (doseq [page (:pages data)]
+          (publish-page page target-dir)))
+    
+    (defn all []
+      {:title "tomlynch.io"
+       :index "/main.html"
+       :posts (map #(-> % .getPath read-file) (glob post-glob))
+       :pages (map #(-> % .getPath read-file) (glob page-glob))})
 
     (with-programs [ls cp rm mkdir]
 
       (pr-sh mkdir "-vp" target-dir)
-      
+
       ; delete old
       (doseq [item (ls target-dir {:seq true})]
         (pr-sh rm "-rvf" (str target-dir item)))
@@ -98,7 +83,9 @@
         (pr-sh cp "-rv" (str resource-dir resx) target-dir))
 
       ; publish
-      (doseq [post-file (all-post-files)]
-        (publish-post (read-file post-file) target-dir)))))
+      (let [data (all)]
+        (publish-index data target-dir)
+        (publish-pages data target-dir)
+        (publish-posts data target-dir)))))
 
 
