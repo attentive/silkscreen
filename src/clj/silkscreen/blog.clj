@@ -30,13 +30,16 @@
 
 (def navbar
   (hiccup.core/html
-    [:nav
-     [:ul.nav.nav-stacked
-      [:li.active [:h3 [:a {:href "/"} "tomlynch.io"]]] 
-      [:li.active [:h3 [:a {:href "/about"} "about"]]] 
-      [:li.active [:h3 [:a {:href "/archive"} "archive"]]] 
-      [:li.active [:h3 [:a {:href "/categories"} "categories"]]] 
-      [:li.active [:h3 [:a {:href "/tags"} "tags"]]]]])) 
+    [:nav.navbar.navbar-default.nav-stacked
+     [:div.navbar-default
+      [:ul.nav.navbar-nav
+       [:li [:h3 [:a {:href "/"} "tomlynch.io"]]]
+       [:li [:h3 [:a {:href "/about"} "about"]]]]]
+     [:div.collapse.navbar-collapse
+      [:ul.nav.navbar-nav
+       [:li [:h3 [:a {:href "/archive"} "archive"]]] 
+       [:li [:h3 [:a {:href "/categories"} "categories"]]] 
+       [:li [:h3 [:a {:href "/tags"} "tags"]]]]]])) 
 
 (defn body [post]
   (fn [nodes]
