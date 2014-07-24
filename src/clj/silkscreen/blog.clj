@@ -28,15 +28,15 @@
   (hiccup.core/html
     [:a {:href (str "/categories/" (make-slug category))} category]))
 
-(def navbar
+#_(def navbar
   (hiccup.core/html
     [:nav.navbar.navbar-default.nav-stacked
      [:div.navbar-default
       [:ul.nav.navbar-nav
-       [:li [:h3 [:a {:href "/"} "tomlynch.io"]]]
-       [:li [:h3 [:a {:href "/about"} "about"]]]]]
+       [:li [:h3 [:a {:href "/"} "tomlynch.io"]]]]]
      [:div.collapse.navbar-collapse
       [:ul.nav.navbar-nav
+       [:li [:h3 [:a {:href "/about"} "about"]]]
        [:li [:h3 [:a {:href "/archive"} "archive"]]] 
        [:li [:h3 [:a {:href "/categories"} "categories"]]] 
        [:li [:h3 [:a {:href "/tags"} "tags"]]]]]])) 
@@ -52,14 +52,14 @@
 (defconduit post-page
   [post]
   [:title] (content (:title post))
-  [:.silkscreen-nav] (html-content navbar)
+  ;[:.silkscreen-nav] (html-content navbar)
   ;[:.silkscreen-related] (content "Related posts")
   [:.silkscreen-post] (body post))
 
 (defconduit index-page
   [data]
   [:title] (content (:title data))
-  [:.silkscreen-nav] (html-content navbar)
+  ;[:.silkscreen-nav] (html-content navbar)
   [:.silkscreen-post] 
   (clone-for [post (take 10 (:posts data))]
              [:.silkscreen-post] (body post)))
