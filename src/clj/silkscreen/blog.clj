@@ -52,14 +52,11 @@
 (defconduit post-page
   [post]
   [:title] (content (:title post))
-  ;[:.silkscreen-nav] (html-content navbar)
-  ;[:.silkscreen-related] (content "Related posts")
   [:.silkscreen-post] (body post))
 
 (defconduit index-page
   [data]
   [:title] (content (:title data))
-  ;[:.silkscreen-nav] (html-content navbar)
   [:.silkscreen-post] 
   (clone-for [post (take 10 (:posts data))]
              [:.silkscreen-post] (body post)))

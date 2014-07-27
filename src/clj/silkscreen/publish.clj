@@ -10,6 +10,16 @@
 (defmacro pr-sh [cmd & args]
   `(doseq [line# (~cmd ~@args {:seq true})] (println line#)))
 
+(defn- minify-css [css-file]
+  (let [out-file (string/replace css-file #".css" ".min.css")]
+    (with-programs [minify]
+      (minify css-file out-file))
+    out-file))
+
+(defn- concat-files [& css-files] 
+  (with-programs [cat]
+    (let [cat-to (apply partial (cons cat css-files))]
+      (cat-to ">" "tomlynch.io.css"))))
 
 (defn publish-site 
   "Publish an entire site."
