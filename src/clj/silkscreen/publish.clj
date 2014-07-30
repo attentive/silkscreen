@@ -88,24 +88,23 @@
     (publish-page config page)))
 
 (defn all [config]
+  "Return all the resources that will be published via the specified configuration."
   {:title "tomlynch.io"
    :index "/main.html"
    :posts (sort-by #(- (to-long (:published %))) (map #(-> % .getPath read-file) (glob (:post-glob config)))) 
    :pages (sort-by #(- (to-long (:published %))) (map #(-> % .getPath read-file) (glob (:page-glob config))))})
 
 (defn delete-site [config]
+  "Delete existing published site (preparing for re-publish)."
   (with-programs [ls rm mkdir]
     (pr-sh mkdir "-vp" (:target-dir config))
-
-    ; delete old
     (doseq [item (ls (:target-dir config) {:seq true})]
       (pr-sh rm "-rvf" (str (:target-dir config) item)))))
 
 (defn copy-dependencies [config]
+  "Copy site dependencies (eg images, fonts, CSS and JavaScript) to the target directory."
   (with-programs [cp]
-
-    ; copy dependencies and resources
-    (doseq [resx ["js" "css" "fonts" "app" "img"]]
+    (doseq [resx ["js" "css" "fonts" "img"]]
       (pr-sh cp "-rv" (str (:resource-dir config) resx) (:target-dir config)))))
 
 (defn publish-site 

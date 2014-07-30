@@ -32,7 +32,7 @@
                    :dependencies [[org.clojure/tools.namespace "0.2.4"]
                                   [org.clojure/java.classpath "0.2.2"]]}}
 
-  :silkscreen {:source-dir "/home/tom/dev/silkscreen/tomlynch.io.posts/"
+  :silkscreen {:source-dir "/home/tom/dev/silkscreen/tomlynch.io/"
                :target-dir "/home/tom/dev/attentive.github.io/"}
 
   :eval-in-leiningen true
