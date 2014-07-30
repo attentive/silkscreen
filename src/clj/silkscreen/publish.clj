@@ -11,7 +11,7 @@
 
 (timbre/refer-timbre)
 
-(timbre/set-level! :debug)
+(timbre/set-level! :info)
 
 (defmacro pr-sh [cmd & args]
   `(doseq [line# (~cmd ~@args {:seq true})] (println line#)))
