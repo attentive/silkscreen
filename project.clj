@@ -12,6 +12,7 @@
                  [rhizome "0.2.1"]
 
                  ; editor backend
+                 [com.stuartsierra/component "0.2.1"]
                  [http-kit "2.1.16"]
                  [ring/ring "1.2.1"]
                  [compojure "1.1.6"]
