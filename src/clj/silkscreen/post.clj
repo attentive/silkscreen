@@ -49,8 +49,9 @@
 (defn new-post
   "Add all necessary keys to an initial post map."
   [post]
-  (merge {:template "resources/templates/index.html"
+  (merge {:template "index.html"
           :title "[untitled]"
           :published (java.util.Date.)}
         post)) 
+
 

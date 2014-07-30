@@ -1,7 +1,10 @@
 (ns silkscreen.path
   (:require [clojure.string :as string]
             [clj-time.core :as t]
+            [taoensso.timbre :as timbre]
             [clj-time.coerce :as coerce]))
+
+(timbre/refer-timbre)
 
 (defn make-slug [name]
   (-> name
@@ -29,4 +32,7 @@
        path-elements
        (string/join "-")))
 
+(defn post-file [post-id]
+  "Get the file associated with a post."
+  (str post-id ".post"))
 

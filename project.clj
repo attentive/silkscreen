@@ -27,11 +27,12 @@
                  [secretary "1.1.0"]
                  [sablono "0.2.17"]]
 
+
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.4"]
                                   [org.clojure/java.classpath "0.2.2"]]}}
 
-  :silkscreen {:source-dir "/home/tom/dev/tomlynch.io.posts/"
+  :silkscreen {:source-dir "/home/tom/dev/silkscreen/tomlynch.io.posts/"
                :target-dir "/home/tom/dev/attentive.github.io/"}
 
   :eval-in-leiningen true

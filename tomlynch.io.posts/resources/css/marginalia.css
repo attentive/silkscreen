@@ -1,0 +1,62 @@
+/**
+ * These styles are not directly releated to the marginalia object, their purpose is to help the demo.
+ */
+body {
+  font: 100%/1.5 sans-serif;
+  background-image: url(http://basehold.it/i/24);
+}
+
+.text {
+  max-width: 40em;
+  margin: 1.5em auto;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+/**
+ * MARGINALIA OBJECT
+ *
+ * Marginalia are, per definition, notes in the margin of a document.
+ * The `marginalia__body` class can be applied to all kinds of content, like text or images.
+ *
+ * Example usage:
+ *
+   <div class="marginalia">
+       <p class="marginalia__body--right">...</p>
+   </div>
+ *
+ */
+.marginalia {
+  font-size: 0.8em;
+  line-height: 1.875;
+}
+
+/**
+ * Wait for a certain breakpoint to trigger 'proper' marginalia. Up to this point, marginalia are inline with the other text.
+ */
+@media (min-width: 75em) {
+  .marginalia {
+    position: relative;
+  }
+
+  [class*="marginalia__body"] {
+    position: absolute;
+    width: 20%;
+  }
+
+  .marginalia__body {
+    left: -25%;
+    text-align: right;
+  }
+
+  /**
+   * Align marginalia to the right of the text.
+   */
+  .marginalia__body--right {
+    right: -25%;
+    text-align: left;
+  }
+}

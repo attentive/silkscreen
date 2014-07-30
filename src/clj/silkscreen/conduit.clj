@@ -25,13 +25,13 @@
 ; An example …
 
 #_(defconduit page
-  [page-data]
-  [:head :title] (content (:title page-data))
-  [:body :div#main] (content (:body page-data)))
+    [page-data]
+    [:head :title] (content (:title page-data))
+    [:body :div#main] (content (:body page-data)))
 
 ; And this is how you use it …
 
 #_(apply str 
-        (page "/path/to/some/file.html" 
-              {:title "This title will be inserted"
-               :body "As will this body content, if there's a div in the input with id 'main'."}))
+         (page "/path/to/some/file.html" 
+               {:title "This title will be inserted"
+                :body "As will this body content, if there's a div in the input with id 'main'."}))
