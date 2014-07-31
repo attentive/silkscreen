@@ -11,46 +11,33 @@
     [clojure.string :as str]
     [clojure.test :as test]
     [clojure.tools.namespace.repl :refer (refresh refresh-all)]
+    [com.stuartsierra.component :as component]  
     silkscreen.editor))
 
-(def system
-  "A Var containing an object representing the application under
-  development."
-  nil)
+(def system nil)
 
-(defn init
-  "Creates and initializes the system under development in the Var
-  #'system."
-  []
-  (alter-var-root #'system (fn [_] (silkscreen.editor/create-system))))
+(defn init []
+  (println "initialising editor …")
+  (alter-var-root #'system 
+                  (constantly (silkscreen.editor/editor-system))))
 
-(defn start
-  "Starts the system running, updates the Var #'system."
-  []
-  (silkscreen.editor/start-system system))
+(defn start []
+  (println "starting editor …")
+  (alter-var-root #'system component/start))
 
-(defn stop
-  "Stops the system if it is currently running, updates the Var
-  #'system."
-  []
-  (silkscreen.editor/stop-system system))
+(defn stop []
+  (println "stopping editor …")
+  (alter-var-root #'system component/stop))
 
-(defn go
-  "Initializes and starts the system running."
-  []
+(defn go []
   (init)
-  (start)
-  :ready)
+  (start))
 
-(defn reset
-  "Stops the system, reloads modified source files, and restarts it."
-  []
+(defn reset []
   (stop)
   (refresh :after 'user/go))
 
-(defn reset-all
-  "Stops the system, reloads modified source files, and restarts it."
-  []
+(defn reset-all []
   (stop)
   (refresh-all :after 'user/go))
 
