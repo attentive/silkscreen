@@ -2,7 +2,7 @@
   (:use compojure.core
         [ring.middleware edn file file-info stacktrace reload]
         ring.middleware.session.cookie
-        [silkscreen.publish :only [post-file all-post-ids]])
+        [silkscreen.publish :only [all cfg]])
   (:require compojure.handler
             [taoensso.timbre :as timbre]
             [ring.util.response :as resp]
@@ -10,11 +10,19 @@
 
 (timbre/refer-timbre)
 
-(defn edn [data & status]
+(defn- post-file [post-id]
+  (str (:post-dir cfg)
+       (silkscreen.path/post-file post-id)))
+
+(defn- edn [data & status]
   {:status (or status 200)
    :headers {"Content-Type" "application/edn"}
    :body (str (pr-str data) \newline)})
 
+(defn- all-post-ids []
+  (let [a (all cfg)]
+    (spy a)
+    (map silkscreen.path/post-id (:posts (all cfg)))))
 
 (defroutes editor-routes
   (GET "/posts/:post-id" [post-id]
@@ -43,7 +51,10 @@
 
   (GET "/publish-site" req
        (silkscreen.publish/publish-site)
-       (edn {:message "Site published" :success true})))
+       (edn {:message "Site published" :success true}))
+  
+  (ANY "*" req
+       (resp/redirect "/editor.html")))
 
 (def silkscreen-app
   (-> editor-routes
