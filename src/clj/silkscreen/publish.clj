@@ -27,6 +27,9 @@
     (let [cat-to (apply partial (cons cat css-files))]
       (cat-to ">" "tomlynch.io.css"))))
 
+(defn post-file [config post-id]
+  (str (:post-dir config) post-id ".post"))
+
 (defn derive-config [config]
   (let [source-dir (:source-dir config)
         [resource-dir post-dir template-dir] 
@@ -42,7 +45,7 @@
      :page-glob page-glob
      :target-dir target-dir}))
 
-(def cfg (derive-config {:source-dir "/home/tom/dev/silkscreen/tomlynch.io.posts/" 
+(def cfg (derive-config {:source-dir "/home/tom/dev/silkscreen/tomlynch.io/" 
                          :target-dir "/home/tom/dev/attentive.github.io/"}))
 
 (defn publish-index [config data]

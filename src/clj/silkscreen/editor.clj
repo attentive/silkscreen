@@ -1,37 +1,27 @@
 (ns silkscreen.editor
   (:require 
-    [org.httpkit.server :as http-kit]
-    silkscreen.web))
+   [org.httpkit.server :as http-kit]
+   [com.stuartsierra.component :as component]  
+   silkscreen.web))
 
-(defprotocol LifeCycle
-  (start [this])
-  (stop [this]))
+(defrecord HttpKitServer []
+  component/Lifecycle
+  (start [server]
+    (println "starting httpkit …")
+    (if-not (nil? (:stopfn server)) 
+      server
+      (assoc server :stopfn 
+             (http-kit/run-server #'silkscreen.web/silkscreen-app 
+                                  {:port 8082 :join? false}))))
+  (stop [server]
+    (println "stopping httpkit …")
+    ; The value returned by http-kit/run-server is a fn that stops the server
+    (when-not (nil? (:stopfn server))
+      ((:stopfn server))
+      (assoc server :stopfn nil))))
 
-(defn start-system [system]
-  (doseq [s (->> system :order (map system))]
-    (start s)))
-
-(defn stop-system [system]
-  (doseq [s (->> system :order (map system) reverse)]
-    (stop s)))
-
-(defrecord HttpKitServer [state]
-  LifeCycle
-  (start [_]
-    (reset! state (http-kit/run-server #'silkscreen.web/silkscreen-app {:port 8082 :join? false})))
-  (stop [_]
-    ; The state returned by http-kit/run-server is a function that stops the server
-    (when @state (@state))
-    (reset! state nil)))
-
-(defn create-httpkit []
-  (->HttpKitServer (atom nil)))
-
-(defn create-system []
-    {:httpkit (create-httpkit)
-     :order [:httpkit]})
-      
-(defn -main []
-  (start-system (create-system)))
+(defn editor-system []
+  (component/system-map
+   :httpkit (map->HttpKitServer {})))
 
 

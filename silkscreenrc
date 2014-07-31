@@ -49,7 +49,8 @@ screen -t clj
 chdir /home/tom/dev/attentive.github.io
 screen -t http-server http-server -g
 
-chdir /home/tom/dev/tomlynch.io.posts
+chdir /home/tom/dev/silkscreen/tomlynch.io
 screen -t content
 
+chdir /home/tom/dev/silkscreen
 
