@@ -7,7 +7,7 @@
         org.satta.glob
         [silkscreen.path :only [ensure-path]]
         [silkscreen.post :only [read-file]]
-        [silkscreen.blog :only [index-page post-page]]))
+        [silkscreen.blog.conduits :only [index-page post-page]]))
 
 (timbre/refer-timbre)
 

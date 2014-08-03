@@ -10,6 +10,7 @@
                  [me.raynes/conch "0.8.0"]
                  [autoclave "0.1.7"]
                  [rhizome "0.2.1"]
+                 [hickory "0.5.3"]
 
                  ; editor backend
                  [com.stuartsierra/component "0.2.1"]
@@ -31,7 +32,8 @@
 
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.4"]
-                                  [org.clojure/java.classpath "0.2.2"]]}}
+                                  [org.clojure/java.classpath "0.2.2"]
+                                  [midje "1.6.3"]]}}
 
   :silkscreen {:source-dir "/home/tom/dev/silkscreen/tomlynch.io/"
                :target-dir "/home/tom/dev/attentive.github.io/"}
