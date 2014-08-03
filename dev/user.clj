@@ -12,6 +12,7 @@
     [clojure.test :as test]
     [clojure.tools.namespace.repl :refer (refresh refresh-all)]
     [com.stuartsierra.component :as component]  
+    midje.repl
     silkscreen.editor))
 
 (def system nil)
@@ -40,4 +41,7 @@
 (defn reset-all []
   (stop)
   (refresh-all :after 'user/go))
+
+(defn midje []
+  (midje.repl/autotest))
 
