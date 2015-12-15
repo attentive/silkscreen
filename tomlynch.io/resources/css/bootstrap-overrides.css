@@ -1,83 +1,83 @@
 .navbar-default {
-  background-color: transparent;
-  background: transparent;
-  border: none;
-  border-color: transparent;
+	background-color: transparent;
+	background: transparent;
+	border: none;
+	border-color: transparent;
 	box-shadow: none;
 }
 
 .navbar-collapse
 {
-  padding: 0px;
+	padding: 0px;
 }
 
 .navbar-toggle
 {
-  margin-right: 0px;
+	margin-right: 0px;
 }
 
 nav h3, nav h2 {
-  margin-right: 20px;
-  vertical-align: baseline;
-  font-family: 'Lato', Helvetica, Arial, sans-serif;
+	margin-right: 20px;
+	vertical-align: baseline;
+	font-family: 'Lato', Helvetica, Arial, sans-serif;
 }
 
 body {
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  font-weight: normal; 
+	font-family: Georgia, 'Times New Roman', Times, serif;
+	font-weight: normal; 
 }
 
-body code, body kbd, body pre, body samp {
-  font-family: 'Inconsolata', sans-serif;
-  font-size: 100%;
+body code, body kbd, body pre, body samp, div.screenplay {
+	font-family: 'Inconsolata', sans-serif;
+	font-size: 100%;
 }
 
 .date {
-  margin-left: 20px;
-  font-family: 'Lato', Helvetica, Arial, sans-serif;
-  font-weight: normal;
+	margin-left: 20px;
+	font-family: 'Lato', Helvetica, Arial, sans-serif;
+	font-weight: normal;
 }
 
 .right-bar .silkscreen-published {
-  margin-top: 20px; /* align with post title */
-  float: right;
+	margin-top: 20px; /* align with post title */
+	float: right;
 }
 
 h1, h2 {
-  font-family: 'Lato', Helvetica, Arial, sans-serif;
+	font-family: 'Lato', Helvetica, Arial, sans-serif;
 }
 
 h3 {
-  font-family: Georgia, 'Times New Roman', Times, serif;
+	font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 pre {
-  background-color: transparent;
-  border-radius: 0px;
-  border-left: none;
-  border-right: none;
-  border-top-color: #e7e7e7;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-bottom-color: #e7e7e7;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
+	background-color: transparent;
+	border-radius: 0px;
+	border-left: none;
+	border-right: none;
+	border-top-color: #e7e7e7;
+	border-top-style: solid;
+	border-top-width: 1px;
+	border-bottom-color: #e7e7e7;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
 }
 
 .left-bar, 
 .silkscreen-post .main,
 .silkscreen-post .body,
 .silkscreen-post .right-bar {
-  padding-left: 0px;
-  padding-right: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
 }
 
 .silkscreen-post .main {
-  border-top-color: #e7e7e7;
-  border-top-style: solid;
-  border-top-width: 1px;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
+	border-top-color: #e7e7e7;
+	border-top-style: solid;
+	border-top-width: 1px;
+	margin-bottom: 20px;
+	padding-bottom: 20px;
 }
 
 .silkscreen-post .main img {
@@ -100,90 +100,106 @@ pre {
 .silkscreen-post .main p.video-wrapper {
 	height: 335px;
 	width: 560px;
-	margin: auto;
+	max-width: 100%;
 	margin-bottom: 5px; 
 }
 
-.silkscreen-post .main .video {
+.silkscreen-post .main iframe.video {
+	height: 315px;
+	width: 560px;
 	position: absolute;
 	margin: auto;
 	margin-top: 20px;
+	margin-bottom: 20px;
 	left: 50%;
 	transform: translate(-50%, 0);
 }
 
 @media (min-width: 993px) {
-  .main {
-    margin-top: 20px;
-  }
+	.main {
+		margin-top: 20px;
+	}
 }
 
 /*
 24px : 30px (font-size)
 26.4px : 33px (line-height)
 33/24 → 1.375? (but this is too small)
-*/
+ */
 
-@media (min-width: 769px) and (max-width:992px) {
-  nav h3 {
-    line-height: 1.45;
-  }
-}
+	@media (min-width: 769px) and (max-width:992px) {
+		nav h3 {
+			line-height: 1.45;
+		}
+	}
 
-@media (max-width: 992px) {
-  .navbar {
-    margin-bottom: 0px;
-  }
-}
+	@media (max-width: 992px) {
+		.navbar {
+			margin-bottom: 0px;
+		}
+	}
 
-@media (max-width: 768px) {
-  body {
-    width: 100%; 
-    overflow-x: hidden;
-  }
-  .row
-  {
-    margin-left: 0px;
-    margin-right: 0px;
-  }
-  .navbar-nav
-  {
-    margin: 0px;
-  }
-  .silkscreen-post img,
-  .silkscreen-post svg 
-  {
-    /* Responsive images (ensure images don't scale beyond their parents) */
+	@media (max-width: 768px) {
 
-    /* Part 1: Set a maxium relative to the parent */
-    max-width: 100%;
+		.silkscreen-post .main p.video-wrapper {
+			width: 100%;
+			margin-bottom: 5px; 
+		}
 
-    /* IE7-8 need help adjusting responsive images */
-    width: auto\9;
+		.silkscreen-post .main iframe.video {
+			width: 100%;
+			position: relative;
+			margin: auto;
+			margin-top: 20px;
+		}
 
-    /* Part 2: Scale the height according to the width, otherwise you get stretching */
-    height: auto;
+		body {
+			width: 100%; 
+			overflow-x: hidden;
+		}
+		.row
+		{
+			margin-left: 0px;
+			margin-right: 0px;
+		}
+		.navbar-nav
+		{
+			margin: 0px;
+		}
+		.silkscreen-post img,
+		.silkscreen-post svg 
+		{
+			/* Responsive images (ensure images don't scale beyond their parents) */
 
-    vertical-align: middle;
-    border: 0;
-    -ms-interpolation-mode: bicubic;
-  }
-}
+			/* Part 1: Set a maxium relative to the parent */
+			max-width: 100%;
 
-/* Pinboard styles */
-.pin-title { 
-  font-size: 90%; 
-  text-decoration: none;
-  color: #b00;
-}
+			/* IE7-8 need help adjusting responsive images */
+			width: auto\9;
 
-.pin-description { 
-  color: #555;
-	word-break: break-word;
-}
+			/* Part 2: Scale the height according to the width, otherwise you get stretching */
+			height: auto;
 
-.pin-tag { 
-  color: #333; 
-  text-decoration: none;
-  font-size:80%; 
-}
+			vertical-align: middle;
+			border: 0;
+			-ms-interpolation-mode: bicubic;
+		}
+	}
+
+	/* Pinboard styles */
+	.pin-title { 
+		font-size: 90%; 
+		text-decoration: none;
+		color: #b00;
+	}
+
+	.pin-description { 
+		color: #555;
+		word-break: break-word;
+	}
+
+	.pin-tag { 
+		color: #333; 
+		text-decoration: none;
+		font-size:80%; 
+	}
