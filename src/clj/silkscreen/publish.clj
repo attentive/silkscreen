@@ -45,8 +45,8 @@
      :page-glob page-glob
      :target-dir target-dir}))
 
-(def cfg (derive-config {:source-dir "/home/tom/dev/silkscreen/tomlynch.io/" 
-                         :target-dir "/home/tom/dev/attentive.github.io/"}))
+(def cfg (derive-config {:source-dir "/Volumes/Space/personal/dev/silkscreen/tomlynch.io/" 
+                         :target-dir "/Volumes/Space/personal/dev/attentive.github.io/"}))
 
 (defn publish-index [config data]
   (let [template (:index data)
@@ -119,7 +119,7 @@
     (delete-site config)
     (copy-dependencies config)
     (publish-index config data)
-    (publish-pages config data)
+    #_(publish-pages config data)
     (publish-posts config data)))
 
 

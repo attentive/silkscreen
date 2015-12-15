@@ -7,8 +7,8 @@
 
 (def test-cfg 
   (publish/derive-config 
-   {:source-dir "/home/tom/dev/silkscreen/test/blog_data/" 
-    :target-dir "/home/tom/dev/silkscreen/test/blog_data/attentive.github.io/"}))
+   {:source-dir "/Volumes/Space/personal/dev/silkscreen/test/blog_data/" 
+    :target-dir "/Volumes/Space/personal/dev/silkscreen/test/blog_data/attentive.github.io/"}))
 
 (facts 
  (fact
