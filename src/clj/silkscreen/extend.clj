@@ -22,7 +22,7 @@
 (defn pygmentize
   "Syntax highlight some code."
   [language text]
-  (let-programs [pygmentize "/usr/bin/pygmentize"]
+  (let-programs [pygmentize "/usr/local/bin/pygmentize"]
     (pygmentize "-fhtml" (str "-l" language)
                 (str "-Ostripnl=False,encoding=utf-8")
                 {:in text})))

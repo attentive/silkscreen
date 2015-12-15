@@ -35,8 +35,8 @@
                                   [org.clojure/java.classpath "0.2.2"]
                                   [midje "1.6.3"]]}}
 
-  :silkscreen {:source-dir "/home/tom/dev/silkscreen/tomlynch.io/"
-               :target-dir "/home/tom/dev/attentive.github.io/"}
+  :silkscreen {:source-dir "/Volumes/Space/personal/dev/silkscreen/tomlynch.io/"
+               :target-dir "/Volumes/Space/personal/dev/attentive.github.io/"}
 
   :eval-in-leiningen true
 
