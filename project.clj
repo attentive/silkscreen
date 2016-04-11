@@ -1,6 +1,6 @@
 (defproject silkscreen "0.2"
   :description "Client-side blog renderer"
-  :jvm-opts ^:replace ["-Xmx1g" "-server"]
+  :jvm-opts ^:replace ["-Xmx1g" "-server" "-XX:-OmitStackTraceInFastThrow"]
 
   :dependencies [; publisher
                  [org.clojure/clojure "1.8.0"]

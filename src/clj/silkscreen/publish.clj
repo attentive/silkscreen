@@ -10,7 +10,6 @@
         [silkscreen.blog.conduits :only [index-page post-page]]))
 
 (timbre/refer-timbre)
-
 (timbre/set-level! :debug)
 
 (defmacro pr-sh [cmd & args]
@@ -67,28 +66,27 @@
          content-dirs)))
 
 (defn ensure-path [content]
-  (spy :debug "ensure-path" (keys content))
+  #_(spy :debug "ensure-path" (keys content))
   (if (:path content) content
-    (let [index (get-index (:dir content))]
+    (let [index (:index content)]
+      #_(spy :debug "index" index)
       (assoc content :path (str "/" (string/join "/" (path-elements index)))))))
 
-(defn publish-content [config content]
-  (spy :debug "publish-content" (keys content))
+(defn publish-content [content config]
   (let [rel-path (:path (ensure-path content))
         path (str (:target-dir config) rel-path)]
     (with-programs [mkdir] (mkdir "-p" path))
     (println "→" rel-path)
-    ; pure post data
-    (doseq [post (:files content)]
-      #_(spy :debug (header post))
-      (let [change-ext #(string/replace %1 #"(.*)\.(page|post)" (str "$1." %2))
-            post-filename (.getName (:file post))
-            template (:template post)]
-        (spit (str path (change-ext post-filename "edn")) (pr-str post))
-        (spit (str path (change-ext post-filename "html"))
-              (apply str (post-page (str (:template-dir config) template) post)))
-        (with-programs [cp]
-          (pr-sh cp "-rv" (str (.getPath (:dir content)) "/*") path))))))
+    (let [post (:index content)
+          change-ext #(string/replace %1 #"(.*)\.(page|post)" (str "$1." %2))
+          postf (.getName (:file post))
+          templatef (str (:template-dir config) (:template post))
+          ednf (str path (change-ext postf "edn"))
+          htmlf (str path (change-ext postf "html"))]
+      (spit ednf (pr-str post))
+      (spit htmlf (apply str (post-page templatef post)))
+      (with-programs [cp]
+        (pr-sh cp "-rv" (str (.getPath (:dir content)) "/*") path)))))
 
 (defn all [config]
   "Return all the resources that will be published via the specified configuration."
@@ -97,8 +95,9 @@
    :content (get-content (:post-dir config))})
 
 (defn publish-all-content [config]
+  (spy :debug config)
   (let [data (all config)]
-    (spy :debug "publish-all-content" (keys (:content data)))
+    (spy :debug (:content data))
     (doseq [content (:content data)]
       (publish-content config content))))
 

@@ -33,11 +33,6 @@
   "Get the file associated with a post."
   (str post-id ".post"))
 
-(defn ensure-path [content]
-  (if (:path content) content
-    (let [index (first (filter #(re-matches #"index.post" (.getName (:file %))) (:files content)))]
-      (assoc content :path (str "/" (string/join "/" (path-elements index)))))))
-
 
 
 
