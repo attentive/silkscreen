@@ -2,12 +2,15 @@
       :doc "Template elements are connected to rendered content via conduit definitions."} 
   silkscreen.blog.conduits
   (:require [net.cgrand.enlive-html :refer [html-content content at 
-                                            clone-for attr?]])
+                                            clone-for attr?]]
+            [taoensso.timbre :as timbre])
   (:use [silkscreen.blog.content :only [formal-date post-link category-link 
                                    post-content title]]  
         [silkscreen.conduit :only [defconduit]]
         [silkscreen.extend :only [extend-node]]
         hiccup.core))
+
+(timbre/refer-timbre)
 
 (defmulti ->content type)
 
@@ -38,6 +41,6 @@
   [data]
   [:title] (content (title data))
   [:.silkscreen-post] 
-  (clone-for [post (take 10 (:posts data))]
-             [:.silkscreen-post] (body post)))
+  (clone-for [content (take 10 (:content data))]
+             [:.silkscreen-post] (body (:index content))))
 

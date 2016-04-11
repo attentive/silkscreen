@@ -16,16 +16,13 @@
       (string/lower-case)))
 
 (defn path-elements [post]
+  (spy :debug "path-elements" post)
   (let [published (coerce/from-date (:published post))
         date-path [(t/year published) (t/month published) (t/day published)]]
     (conj date-path
           (if (:slug post) 
             (:slug post) 
             (make-slug (:title post))))))
-
-(defn ensure-path [post]
-  (if (:path post) post
-    (assoc post :path (string/join "/" (path-elements post)))))
 
 (defn post-id [post]
   (->> post
@@ -35,4 +32,12 @@
 (defn post-file [post-id]
   "Get the file associated with a post."
   (str post-id ".post"))
+
+(defn ensure-path [content]
+  (if (:path content) content
+    (let [index (first (filter #(re-matches #"index.post" (.getName (:file %))) (:files content)))]
+      (assoc content :path (str "/" (string/join "/" (path-elements index)))))))
+
+
+
 

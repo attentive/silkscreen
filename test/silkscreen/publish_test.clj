@@ -13,7 +13,7 @@
 (facts 
  (fact
   ;(conduits/post-page (:template (post-test/test-post)) post-test/test-post) => truthy
-  (publish/publish-post test-cfg post-test/test-post) => nil))
+  (publish/publish-all-content test-cfg) => nil))
 
 (facts
  (fact 

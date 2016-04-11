@@ -4,14 +4,14 @@
             [taoensso.timbre :as timbre])
   (:use [clojure.java.shell :only [sh]]
         clj-time.coerce
-        org.satta.glob
-        [silkscreen.path :only [ensure-path]]
-        [silkscreen.post :only [read-file]]
+        [me.raynes.fs :only [directory? file find-files find-files* list-dir]]
+        [silkscreen.path :only [path-elements]]
+        [silkscreen.post :only [read-file header]]
         [silkscreen.blog.conduits :only [index-page post-page]]))
 
 (timbre/refer-timbre)
 
-(timbre/set-level! :info)
+(timbre/set-level! :debug)
 
 (defmacro pr-sh [cmd & args]
   `(doseq [line# (~cmd ~@args {:seq true})] (println line#)))
@@ -28,74 +28,88 @@
       (cat-to ">" "tomlynch.io.css"))))
 
 (defn post-file [config post-id]
-  (str (:post-dir config) post-id ".post"))
+  (str (:post-dir config) post-id "/index.post"))
 
 (defn derive-config [config]
   (let [source-dir (:source-dir config)
-        [resource-dir post-dir template-dir] 
-        (map #(str source-dir % "/") ["resources" "posts" "templates"])
-        post-glob (str post-dir "*.post")
-        page-glob (str post-dir "*.page")
+        [resource-dir post-dir template-dir] (map #(str source-dir % "/") ["resources" "posts" "templates"])
         target-dir (:target-dir config)]
     {:source-dir source-dir
      :resource-dir resource-dir
      :post-dir post-dir
      :template-dir template-dir
-     :post-glob post-glob
-     :page-glob page-glob
      :target-dir target-dir}))
 
 (def cfg (derive-config {:source-dir "/Volumes/Space/personal/dev/silkscreen/tomlynch.io/" 
                          :target-dir "/Volumes/Space/personal/dev/attentive.github.io/"}))
 
-(defn publish-index [config data]
-  (let [template (:index data)
-        rel-path "/"
-        path (str (:target-dir config) rel-path)]
-    (println "→" rel-path)
-    (spit (str path "/index.html")
-          (apply str (index-page (str (:template-dir config) template) data)))))
 
-(defn publish-post [config post]
-  (spy :debug "publish-post" post)
-  (let [template (:template post)
-        rel-path (:path (ensure-path post))
+;; Get files
+
+(defn get-content-files 
+  "Gets all files under [content-dir] that match pattern"
+  [content-dir] 
+  (map read-file (find-files content-dir #".*(post|page)")))
+
+(defn get-index
+  "Gets the index file under [content-dir] if it exists"
+  [content-dir]
+  (if-let [index-file (first (find-files content-dir #".*index.(post|page)"))]
+    (read-file index-file)))
+
+(defn get-content
+  [post-dir]
+  "Gets all directories under [post-dir]"
+  (let [content-dirs (filter directory? (list-dir post-dir))]
+    (map #(hash-map :dir %
+                    :files (get-content-files %)
+                    :index (get-index %)) 
+         content-dirs)))
+
+(defn ensure-path [content]
+  (spy :debug "ensure-path" (keys content))
+  (if (:path content) content
+    (let [index (get-index (:dir content))]
+      (assoc content :path (str "/" (string/join "/" (path-elements index)))))))
+
+(defn publish-content [config content]
+  (spy :debug "publish-content" (keys content))
+  (let [rel-path (:path (ensure-path content))
         path (str (:target-dir config) rel-path)]
     (with-programs [mkdir] (mkdir "-p" path))
     (println "→" rel-path)
     ; pure post data
-    (spit (str path "/post.edn") (pr-str post))
-    ; rendered post
-    (spit (str path "/index.html") 
-          (apply str (post-page (str (:template-dir config) template) post)))))
-
-(defn publish-page [config page]
-  (spy :debug "publish-page" page)
-  (let [template (:template page)
-        rel-path "about"
-        path (str (:target-dir config) rel-path)]
-    (with-programs [mkdir] (mkdir "-p" path))
-    (println "→" rel-path)
-    ; pure post data
-    (spit (str path "/post.edn") (pr-str page))
-    ; rendered post
-    (spit (str path "/index.html") 
-          (apply str (post-page (str (:template-dir config) template) page)))))
-
-(defn publish-posts [config data]
-  (doseq [post (:posts data)]
-    (publish-post config post)))
-
-(defn publish-pages [config data]
-  (doseq [page (:pages data)]
-    (publish-page config page)))
+    (doseq [post (:files content)]
+      #_(spy :debug (header post))
+      (let [change-ext #(string/replace %1 #"(.*)\.(page|post)" (str "$1." %2))
+            post-filename (.getName (:file post))
+            template (:template post)]
+        (spit (str path (change-ext post-filename "edn")) (pr-str post))
+        (spit (str path (change-ext post-filename "html"))
+              (apply str (post-page (str (:template-dir config) template) post)))
+        (with-programs [cp]
+          (pr-sh cp "-rv" (str (.getPath (:dir content)) "/*") path))))))
 
 (defn all [config]
   "Return all the resources that will be published via the specified configuration."
   {:title "tomlynch.io"
    :index "/main.html"
-   :posts (sort-by #(- (to-long (:published %))) (map #(-> % .getPath read-file) (glob (:post-glob config)))) 
-   :pages (sort-by #(- (to-long (:published %))) (map #(-> % .getPath read-file) (glob (:page-glob config))))})
+   :content (get-content (:post-dir config))})
+
+(defn publish-all-content [config]
+  (let [data (all config)]
+    (spy :debug "publish-all-content" (keys (:content data)))
+    (doseq [content (:content data)]
+      (publish-content config content))))
+
+(defn publish-index [config]
+  (let [data (all config)
+        template (:index data)
+        rel-path "/"
+        path (str (:target-dir config) rel-path)]
+    (println "→" rel-path)
+    (spit (str path "/index.html")
+          (apply str (index-page (str (:template-dir config) template) data)))))
 
 (defn delete-site [config]
   "Delete existing published site (preparing for re-publish)."
@@ -114,12 +128,10 @@
   "Publish an entire site."
   [config]
   ; publish
-  (let [config (derive-config config)
-        data (all config)]
+  (let [config (derive-config config)]
     (delete-site config)
     (copy-dependencies config)
-    (publish-index config data)
-    #_(publish-pages config data)
-    (publish-posts config data)))
+    (publish-index config)
+    (publish-all-content config)))
 
 

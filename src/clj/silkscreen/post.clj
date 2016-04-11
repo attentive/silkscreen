@@ -31,15 +31,22 @@
 (defn read-file
   "Read a post from a file containing a post header and body separated by (ruler)."
   [post-file]
-  (read-post* (line-seq (clojure.java.io/reader post-file))))
+  (assoc (read-post* (line-seq (clojure.java.io/reader post-file)))
+         :file post-file))
+
+(defn header [post]
+  (dissoc post :body :file))
+
+(defn body [post]
+  (:body post))
 
 (defn pretty-post 
   "Produce a string suitable for saving a post back out to 'source'."
   [post]
   (with-out-str 
-    (pretty/pprint (dissoc post :body))
+    (pretty/pprint (header post))
     (println (ruler))
-    (println (:body post))))
+    (println (body post))))
 
 (defn write-post
   "Write a post back to file."
@@ -50,7 +57,7 @@
   "Add all necessary keys to an initial post map."
   [post]
   (merge {:template "index.html"
-          :title "[untitled]"
+          :title nil 
           :published (java.util.Date.)}
         post)) 
 

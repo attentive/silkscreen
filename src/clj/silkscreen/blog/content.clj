@@ -2,10 +2,13 @@
       :doc "Content renderers for various common page elements."}
   silkscreen.blog.content
   (:require [autoclave.core :refer [markdown-to-html markdown-processor]]
-            [clj-time format core coerce])
+            [clj-time format core coerce]
+            [taoensso.timbre :as timbre])
   (:use [silkscreen.path :only [ensure-path make-slug]]
         hiccup.core
         hickory.core))
+
+(timbre/refer-timbre)
 
 (defonce pegd (markdown-processor :fenced-code-blocks))
 

@@ -1,6 +1,6 @@
 (ns silkscreen.app
-  (:require [om.core :as om :include-macros true]
-            [secretary.core :as secretary :include-macros true :refer [defroute]]
+  (:require [om.core :as om]
+            [secretary.core :as secretary :refer-macros [defroute]]
             [cljs.core.async :refer [put! chan pub]]
             silkscreen.xhr))
 
