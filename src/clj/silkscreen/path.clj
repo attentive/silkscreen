@@ -15,17 +15,23 @@
       (string/trim)
       (string/lower-case)))
 
-(defn path-elements [post]
-  (spy :debug "path-elements" post)
-  (let [published (coerce/from-date (:published post))
+(defn path-elements [content]
+  "Get all the elements of the path (filesystem or slug) associated with a content item." 
+  (let [published (coerce/from-date (:published content))
         date-path [(t/year published) (t/month published) (t/day published)]]
     (conj date-path
-          (if (:slug post) 
-            (:slug post) 
-            (make-slug (:title post))))))
+          (if (:slug content) 
+            (:slug content) 
+            (make-slug (:title content))))))
 
-(defn post-id [post]
-  (->> post
+(defn ensure-path [content]
+  "Ensure the path required for a content item has been associated with the item."
+  (if (:path content) content
+      (assoc content :path (str "/" (string/join "/" (path-elements content))))))
+
+(defn post-id [content]
+  "Get an id for a content item."
+  (->> content
        path-elements
        (string/join "-")))
 

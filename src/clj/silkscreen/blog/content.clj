@@ -21,9 +21,9 @@
 (defn formal-date [inst]
   (date "d MMMM, yyyy" inst)) 
 
-(defn post-link [post]
-  "Create a link to a post."
-  [:a {:href (:path (ensure-path post))} (:title post)])
+(defn post-link [content]
+  "Create a link to a content item."
+  [:a {:href (:path (ensure-path content))} (:title content)])
 
 (defn category-link [category]
   "Create a link to a category."

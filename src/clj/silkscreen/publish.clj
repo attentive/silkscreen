@@ -4,8 +4,9 @@
             [taoensso.timbre :as timbre])
   (:use [clojure.java.shell :only [sh]]
         clj-time.coerce
+        org.satta.glob
         [me.raynes.fs :only [directory? file find-files find-files* list-dir]]
-        [silkscreen.path :only [path-elements]]
+        [silkscreen.path :only [path-elements ensure-path]]
         [silkscreen.post :only [read-file header]]
         [silkscreen.blog.conduits :only [index-page post-page]]))
 
@@ -65,15 +66,9 @@
                     :index (get-index %)) 
          content-dirs)))
 
-(defn ensure-path [content]
-  #_(spy :debug "ensure-path" (keys content))
-  (if (:path content) content
-    (let [index (:index content)]
-      #_(spy :debug "index" index)
-      (assoc content :path (str "/" (string/join "/" (path-elements index)))))))
-
 (defn publish-content [content config]
-  (let [rel-path (:path (ensure-path content))
+  (let [post (:index content)
+        rel-path (:path (ensure-path post))
         path (str (:target-dir config) rel-path)]
     (with-programs [mkdir] (mkdir "-p" path))
     (println "→" rel-path)
@@ -81,12 +76,15 @@
           change-ext #(string/replace %1 #"(.*)\.(page|post)" (str "$1." %2))
           postf (.getName (:file post))
           templatef (str (:template-dir config) (:template post))
-          ednf (str path (change-ext postf "edn"))
-          htmlf (str path (change-ext postf "html"))]
+          ednf (str path "/" (change-ext postf "edn"))
+          htmlf (str path "/" (change-ext postf "html"))]
       (spit ednf (pr-str post))
       (spit htmlf (apply str (post-page templatef post)))
       (with-programs [cp]
-        (pr-sh cp "-rv" (str (.getPath (:dir content)) "/*") path)))))
+        (let [expr (str (.getPath (:dir content)) "/*")
+              all-content-files (glob expr)]
+          (doseq [file all-content-files]
+            (pr-sh cp "-v" (.getPath file) path)))))))
 
 (defn all [config]
   "Return all the resources that will be published via the specified configuration."
@@ -95,9 +93,7 @@
    :content (get-content (:post-dir config))})
 
 (defn publish-all-content [config]
-  (spy :debug config)
   (let [data (all config)]
-    (spy :debug (:content data))
     (doseq [content (:content data)]
       (publish-content config content))))
 

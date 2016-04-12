@@ -23,10 +23,10 @@
           (.endsWith templatef ".html") => true)
 
     (fact "post-page conduit works with the first content item"
-          (conduits/post-page templatef first-item-index) => nil))
+          (= (first (conduits/post-page templatef first-item-index)) "<!DOCTYPE html>\n") => true))
 
-  #_(fact "publishing the first content item completes successfully, returning nil" 
-          (publish/publish-content (first (:content (publish/all test-cfg))) test-cfg) => nil)
+  (fact "publishing the first content item completes successfully, returning nil" 
+        (publish/publish-content (first (:content (publish/all test-cfg))) test-cfg) => nil)
 
   #_(fact "publishing all content completes successfully, returning nil"
           ;(conduits/post-page (:template (post-test/test-post)) post-test/test-post) => truthy
