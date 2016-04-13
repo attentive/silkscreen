@@ -2,7 +2,8 @@
   (:require [clojure.string :as string]
             [clj-time.core :as t]
             [taoensso.timbre :as timbre]
-            [clj-time.coerce :as coerce]))
+            [clj-time.coerce :as coerce]
+            [me.raynes.fs :as fs]))
 
 (timbre/refer-timbre)
 
@@ -15,8 +16,16 @@
       (string/trim)
       (string/lower-case)))
 
-(defn path-elements [content]
-  "Get all the elements of the path (filesystem or slug) associated with a content item." 
+
+(defn content-ext [content]
+  (let [ext (fs/extension (:file content))]
+    (spy :debug ext)
+    ext))
+
+(defmulti path-elements content-ext)
+
+(defmethod path-elements ".post" [content]
+  "Get all the elements of the path (filesystem or slug) associated with a post content item." 
   (let [published (coerce/from-date (:published content))
         date-path [(t/year published) (t/month published) (t/day published)]]
     (conj date-path
@@ -24,10 +33,16 @@
             (:slug content) 
             (make-slug (:title content))))))
 
+(defmethod path-elements ".page" [content]
+  "Get all the elements of the path (filesystem or slug) associated with a page content item." 
+  [(if (:slug content) 
+     (:slug content) 
+     (make-slug (:title content)))])
+
 (defn ensure-path [content]
   "Ensure the path required for a content item has been associated with the item."
   (if (:path content) content
-      (assoc content :path (str "/" (string/join "/" (path-elements content))))))
+      (assoc content :path (string/join "/" (path-elements content)))))
 
 (defn post-id [content]
   "Get an id for a content item."

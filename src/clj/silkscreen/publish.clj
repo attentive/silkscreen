@@ -71,7 +71,7 @@
         rel-path (:path (ensure-path post))
         path (str (:target-dir config) rel-path)]
     (with-programs [mkdir] (mkdir "-p" path))
-    (println "→" rel-path)
+    (println "->" rel-path)
     (let [post (:index content)
           change-ext #(string/replace %1 #"(.*)\.(page|post)" (str "$1." %2))
           postf (.getName (:file post))
@@ -95,7 +95,7 @@
 (defn publish-all-content [config]
   (let [data (all config)]
     (doseq [content (:content data)]
-      (publish-content config content))))
+      (publish-content content config))))
 
 (defn publish-index [config]
   (let [data (all config)

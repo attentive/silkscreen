@@ -1,6 +1,7 @@
-(ns silkscreen.publish-test
+(ns silkscreen.path-test
   (:use midje.sweet)
   (:require [silkscreen.blog.conduits :as conduits]  
+            [silkscreen.path :as path]
             [silkscreen.publish :as publish]
             [silkscreen.post-test :as post-test]
             [clojure.string :as string]))
@@ -10,8 +11,7 @@
     {:source-dir "/Volumes/Space/personal/dev/silkscreen/test/blog_data/" 
      :target-dir "/Volumes/Space/personal/dev/silkscreen/test/blog_data/attentive.github.io/"}))
 
-(facts
-
+#_(facts
   (fact "every content item has a directory, files and an index file"
         (every? #(= #{:files :dir :index} (-> % keys set)) 
                 (:content (publish/all test-cfg))) => true)
@@ -29,6 +29,5 @@
         (publish/publish-content (first (:content (publish/all test-cfg))) test-cfg) => nil)
 
   (fact "publishing all content completes successfully, returning nil"
-          ;(conduits/post-page (:template (post-test/test-post)) post-test/test-post) => truthy
           (publish/publish-all-content test-cfg) => nil))
 
