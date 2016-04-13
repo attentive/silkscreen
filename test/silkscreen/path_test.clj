@@ -11,23 +11,9 @@
     {:source-dir "/Volumes/Space/personal/dev/silkscreen/test/blog_data/" 
      :target-dir "/Volumes/Space/personal/dev/silkscreen/test/blog_data/attentive.github.io/"}))
 
-#_(facts
-  (fact "every content item has a directory, files and an index file"
-        (every? #(= #{:files :dir :index} (-> % keys set)) 
-                (:content (publish/all test-cfg))) => true)
-
-  (let [first-item-index (-> (publish/all test-cfg) :content first :index)
-        templatef (str (:template-dir test-cfg) (:template first-item-index))]
-
-    (fact "index of the first content item has a template file with .html extension"
-          (.endsWith templatef ".html") => true)
-
-    (fact "post-page conduit works with the first content item"
-          (= (first (conduits/post-page templatef first-item-index)) "<!DOCTYPE html>\n") => true))
-
-  (fact "publishing the first content item completes successfully, returning nil" 
-        (publish/publish-content (first (:content (publish/all test-cfg))) test-cfg) => nil)
-
-  (fact "publishing all content completes successfully, returning nil"
-          (publish/publish-all-content test-cfg) => nil))
+(facts
+  (let [all-content (:content (publish/all test-cfg))]
+    (fact "posts and pages generate different path elements" 
+          (into [] (map (comp path/path-elements :index) all-content)) =>
+          [["about"] [2014 7 6 "let-s-try-a-new-one"]])))
 

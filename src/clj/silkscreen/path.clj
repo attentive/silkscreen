@@ -18,9 +18,7 @@
 
 
 (defn content-ext [content]
-  (let [ext (fs/extension (:file content))]
-    (spy :debug ext)
-    ext))
+  (fs/extension (:file content)))
 
 (defmulti path-elements content-ext)
 

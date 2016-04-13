@@ -71,20 +71,23 @@
         rel-path (:path (ensure-path post))
         path (str (:target-dir config) rel-path)]
     (with-programs [mkdir] (mkdir "-p" path))
-    (println "->" rel-path)
+    (println "→" rel-path)
     (let [post (:index content)
           change-ext #(string/replace %1 #"(.*)\.(page|post)" (str "$1." %2))
           postf (.getName (:file post))
           templatef (str (:template-dir config) (:template post))
-          ednf (str path "/" (change-ext postf "edn"))
-          htmlf (str path "/" (change-ext postf "html"))]
-      (spit ednf (pr-str post))
-      (spit htmlf (apply str (post-page templatef post)))
+          ednf (change-ext postf "edn")
+          htmlf (change-ext postf "html")]
       (with-programs [cp]
         (let [expr (str (.getPath (:dir content)) "/*")
               all-content-files (glob expr)]
           (doseq [file all-content-files]
-            (pr-sh cp "-v" (.getPath file) path)))))))
+            (println "→→" (.getName file))
+            (pr-sh cp (.getPath file) path))))
+      (println "→→" ednf)
+      (spit (str path "/" ednf) (pr-str post))
+      (println "→→" htmlf)
+      (spit (str path "/" htmlf) (apply str (post-page templatef post))))))
 
 (defn all [config]
   "Return all the resources that will be published via the specified configuration."
