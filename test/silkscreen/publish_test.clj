@@ -29,6 +29,14 @@
         (publish/publish-content (first (:content (publish/all test-cfg))) test-cfg) => nil)
 
   (fact "publishing all content completes successfully, returning nil"
-          ;(conduits/post-page (:template (post-test/test-post)) post-test/test-post) => truthy
-          (publish/publish-all-content test-cfg) => nil))
+        (publish/publish-all-content test-cfg) => nil)
+
+  (fact "publishing the index completes successfully, returning nil" 
+        (publish/publish-index test-cfg) => nil)
+  
+  (fact "deleting the site completes successfully, returning nil"
+        (publish/delete-site test-cfg) => nil)
+  
+  (fact "publishing the entire site completes successfully, returning nil"
+        (publish/publish-site test-cfg) => nil))
 

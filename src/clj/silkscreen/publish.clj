@@ -103,10 +103,9 @@
 (defn publish-index [config]
   (let [data (all config)
         template (:index data)
-        rel-path "/"
-        path (str (:target-dir config) rel-path)]
-    (println "→" rel-path)
-    (spit (str path "/index.html")
+        index-path (str (:target-dir config) "index.html")]
+    (println "→ index.html")
+    (spit index-path
           (apply str (index-page (str (:template-dir config) template) data)))))
 
 (defn delete-site [config]
@@ -114,13 +113,16 @@
   (with-programs [ls rm mkdir]
     (pr-sh mkdir "-vp" (:target-dir config))
     (doseq [item (ls (:target-dir config) {:seq true})]
-      (pr-sh rm "-rvf" (str (:target-dir config) item)))))
+      (let [full-path (str (:target-dir config) item)]
+        (println "rm -r" full-path)
+        (pr-sh rm "-r" full-path)))))
 
 (defn copy-dependencies [config]
   "Copy site dependencies (eg images, fonts, CSS and JavaScript) to the target directory."
   (with-programs [cp]
     (doseq [resx ["js" "css" "fonts" "img"]]
-      (pr-sh cp "-rv" (str (:resource-dir config) resx) (:target-dir config)))))
+      (println "→" resx)
+      (pr-sh cp "-r" (str (:resource-dir config) resx) (:target-dir config)))))
 
 (defn publish-site 
   "Publish an entire site."
